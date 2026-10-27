@@ -50,15 +50,27 @@ Hook 只写会话 ID、项目目录名、通用状态与时间，不保存提示
 输出为空，不替用户批准或拒绝任何操作。状态文件在 `.claude/boring-notch-events/`。
 列表行复制 `claude --resume '<session-id>'`，不自动执行终端命令。
 
+### Qoder（本地 hooks）
+
+在仓库目录运行：
+
+```sh
+python3 scripts/agent-status/install_qoder_hooks.py
+```
+
+安装器保留 `.qoder/settings.json` 中的原有配置和 hooks，修改前备份，可重复运行。
+安装后需要重启 Qoder IDE，新的 hooks 才会加载。状态事件与 Claude 使用相同的最小元数据边界，
+保存在 `.qoder/boring-notch-events/`，不会保存提示词、工具输入、输出或凭据。
+
 ## 文件权限与关闭
 
-默认读取用户目录下 `.codex` / `.claude`；若应用受沙盒限制或使用自定义目录，
+默认读取用户目录下 `.codex` / `.claude` / `.qoder`；若应用受沙盒限制或使用自定义目录，
 在 Agents 面板点击来源名称，选择对应目录，应用保存安全作用域书签。
-关闭面板顶部的 Agent 状态开关即停止扫描并隐藏右岛。
+在设置的 Agents 页勾选需要加入岛的来源；关闭面板顶部的 Agent 状态开关即停止扫描并隐藏右岛。
 
-卸载 Claude 接入：从 `.claude/settings.json` 的 hooks 中移除 command 含
-`boring_notch_status.py` 的条目。只删除这些条目，保留其他 hooks；然后可删除
-`.claude/hooks/boring_notch_status.py` 和 `.claude/boring-notch-events`。
+卸载 Claude 或 Qoder 接入：从对应 `settings.json` 的 hooks 中移除 command 或 args 含
+`boring_notch_status.py` 的条目。只删除这些条目，保留其他 hooks；然后可删除对应目录下
+`hooks/boring_notch_status.py` 和 `boring-notch-events`。
 
 ## 验证
 
@@ -75,3 +87,4 @@ Fork Build 工作流会先运行这些测试，再编译应用。
 官方接口参考：
 - https://learn.chatgpt.com/docs/app-server （运行时状态与通知；此版未连接现有桌面运行时）
 - https://code.claude.com/docs/en/hooks （Claude 生命周期 hook 输入和配置）
+- https://docs.qoder.com/extensions/hooks （Qoder Desktop 生命周期 hook 输入和配置）

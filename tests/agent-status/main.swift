@@ -32,6 +32,8 @@ expect(AgentSummary(sessions: [running, completed], now: now.addingTimeInterval(
 expect(AgentSession.claudeEvent(["version": 9]) == nil, "invalid bridge version")
 let claude = AgentSession.claudeEvent(["version": 1, "session_id": "a", "timestamp": now.timeIntervalSince1970, "state": "running"])!
 expect(claude.id != a.id, "provider IDs must not collide")
+let qoder = AgentSession.hookEvent(["version": 1, "session_id": "a", "timestamp": now.timeIntervalSince1970, "state": "waiting"], provider: .qoder)!
+expect(qoder.provider == .qoder && qoder.id != claude.id, "Qoder events keep their own provider and ID")
 
 var overlapping = AgentSession(provider: .codex, sessionID: "overlap")
 overlapping.consumeCodex(event("event_msg", ["type": "task_started", "turn_id": "new"], now))
@@ -63,4 +65,12 @@ try encoded(event("event_msg", ["type": "task_started"], now)).write(to: file)
 expect(reader.scan(codex: codex, claude: claudeRoot, now: now).0.first?.state == .running, "rotation/truncation recovery")
 try FileManager.default.removeItem(at: file)
 expect(reader.scan(codex: codex, claude: claudeRoot, now: now.addingTimeInterval(16)).0.isEmpty, "archived or removed session disappears")
-print("PASS: event transitions, stale state, aggregation, partial writes, deduplication and file rotation")
+let qoderRoot = root.appendingPathComponent("qoder")
+let qoderEvents = qoderRoot.appendingPathComponent("boring-notch-events")
+try FileManager.default.createDirectory(at: qoderEvents, withIntermediateDirectories: true)
+let qoderRecord: [String: Any] = ["version": 1, "session_id": "qoder-session", "state": "running",
+                                  "project": "project", "timestamp": now.timeIntervalSince1970]
+try JSONSerialization.data(withJSONObject: qoderRecord).write(to: qoderEvents.appendingPathComponent("event.json"))
+let qoderSessions = reader.scan(codex: codex, claude: claudeRoot, qoder: qoderRoot, now: now.addingTimeInterval(16)).0
+expect(qoderSessions.count == 1 && qoderSessions[0].provider == .qoder, "read Qoder hook events")
+print("PASS: event transitions, stale state, aggregation, partial writes, deduplication, file rotation and Qoder events")

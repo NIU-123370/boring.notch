@@ -100,7 +100,7 @@ struct AgentSessionsView: View {
                     ForEach(AgentProvider.allCases, id: \.self) { provider in
                         Text("\(provider.title)：\(manager.connections[provider] ?? "正在连接")")
                     }
-                    Text("Claude Code 首次使用需要安装仓库中的 hooks；详情见使用说明。")
+                    Text("Claude Code 和 Qoder 首次使用需要安装仓库中的 hooks；详情见使用说明。")
                         .foregroundStyle(.secondary)
                 }
                 .font(.system(size: 11))
@@ -146,7 +146,7 @@ struct AgentSessionsView: View {
                 Spacer(minLength: 4)
                 if copiedID == session.id {
                     Text("已复制恢复命令").font(.system(size: 9)).foregroundStyle(.green)
-                } else {
+                } else if session.provider != .qoder {
                     Image(systemName: session.provider == .codex ? "arrow.up.right" : "doc.on.doc")
                         .font(.system(size: 10)).foregroundStyle(.secondary)
                 }
@@ -155,6 +155,6 @@ struct AgentSessionsView: View {
             .background(.white.opacity(0.055), in: RoundedRectangle(cornerRadius: 6))
         }
         .buttonStyle(.plain)
-        .help("\(session.sessionID) · \(session.provider == .codex ? "打开会话" : "复制 Claude Code 恢复命令")")
+        .help("\(session.sessionID) · \(session.provider == .codex ? "打开会话" : session.provider == .claude ? "复制 Claude Code 恢复命令" : "Qoder 会话")")
     }
 }

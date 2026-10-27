@@ -16,7 +16,7 @@ final class AgentStatusReader: @unchecked Sendable {
     private var lastDiscovery = Date.distantPast
     private var roots: [URL] = []
 
-    func scan(codex: URL, claude: URL, now: Date = Date()) -> ([AgentSession], [AgentProvider: String]) {
+    func scan(codex: URL, claude: URL, qoder: URL? = nil, now: Date = Date()) -> ([AgentSession], [AgentProvider: String]) {
         lock.lock()
         defer { lock.unlock() }
         if roots != [codex, claude] {
@@ -43,18 +43,25 @@ final class AgentStatusReader: @unchecked Sendable {
                 }
             }
         }
-        let hooksURL = claude.appendingPathComponent("boring-notch-events")
-        let hookInstalled = FileManager.default.fileExists(atPath: hooksURL.appendingPathComponent("installed").path)
-        connection[.claude] = hookInstalled ? "Hooks 已配置，等待事件" : "未连接：需安装 Claude hooks"
-        if let files = try? FileManager.default.contentsOfDirectory(at: hooksURL, includingPropertiesForKeys: [.contentModificationDateKey]) {
-            for url in files.filter({ $0.pathExtension == "json" }).prefix(200) {
-                guard let data = boundedData(url, limit: 16384),
-                      let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-                      let session = AgentSession.claudeEvent(json),
-                      session.updatedAt > now.addingTimeInterval(-86400),
-                      session.updatedAt <= now.addingTimeInterval(60) else { continue }
-                result.append(session.resolved(at: now))
-                if now.timeIntervalSince(session.updatedAt) < 300 { connection[.claude] = "本地事件已连接" }
+        let hookSources: [(AgentProvider, URL?)] = [(.claude, claude), (.qoder, qoder)]
+        for (provider, root) in hookSources {
+            guard let root else {
+                connection[provider] = "未连接：请选择 \(provider.directoryName) 文件夹"
+                continue
+            }
+            let eventsURL = root.appendingPathComponent("boring-notch-events")
+            let installed = FileManager.default.fileExists(atPath: eventsURL.appendingPathComponent("installed").path)
+            connection[provider] = installed ? "Hooks 已配置，等待事件" : "未连接：需安装 \(provider.title) hooks"
+            if let files = try? FileManager.default.contentsOfDirectory(at: eventsURL, includingPropertiesForKeys: [.contentModificationDateKey]) {
+                for url in files.filter({ $0.pathExtension == "json" }).prefix(200) {
+                    guard let data = boundedData(url, limit: 16384),
+                          let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                          let session = AgentSession.hookEvent(json, provider: provider),
+                          session.updatedAt > now.addingTimeInterval(-86400),
+                          session.updatedAt <= now.addingTimeInterval(60) else { continue }
+                    result.append(session.resolved(at: now))
+                    if now.timeIntervalSince(session.updatedAt) < 300 { connection[provider] = "本地事件已连接" }
+                }
             }
         }
         // Namespaced IDs prevent collisions between providers; one row per session.

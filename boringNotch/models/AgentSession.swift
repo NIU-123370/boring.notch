@@ -1,8 +1,21 @@
 import Foundation
 
 enum AgentProvider: String, Codable, CaseIterable {
-    case codex, claude
-    var title: String { self == .codex ? "Codex" : "Claude Code" }
+    case codex, claude, qoder
+    var title: String {
+        switch self {
+        case .codex: return "Codex"
+        case .claude: return "Claude Code"
+        case .qoder: return "Qoder"
+        }
+    }
+    var directoryName: String {
+        switch self {
+        case .codex: return ".codex"
+        case .claude: return ".claude"
+        case .qoder: return ".qoder"
+        }
+    }
 }
 
 enum AgentState: String, Codable, CaseIterable {
@@ -110,11 +123,15 @@ struct AgentSession: Identifiable, Equatable {
     }
 
     static func claudeEvent(_ record: [String: Any]) -> AgentSession? {
+        hookEvent(record, provider: .claude)
+    }
+
+    static func hookEvent(_ record: [String: Any], provider: AgentProvider) -> AgentSession? {
         guard record["version"] as? Int == 1,
               let id = record["session_id"] as? String, !id.isEmpty, id.count <= 200,
               let raw = record["state"] as? String, let state = AgentState(rawValue: raw),
               let timestamp = record["timestamp"] as? Double else { return nil }
-        var session = AgentSession(provider: .claude, sessionID: id)
+        var session = AgentSession(provider: provider, sessionID: id)
         session.project = String((record["project"] as? String ?? "").prefix(160))
         session.detail = String((record["detail"] as? String ?? state.title).prefix(160))
         session.state = state

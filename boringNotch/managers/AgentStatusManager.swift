@@ -48,7 +48,7 @@ final class AgentStatusManager: ObservableObject {
                 if url.startAccessingSecurityScopedResource() { scopedURLs.append(url) }
                 roots[provider] = url
             } else {
-                roots[provider] = home.appendingPathComponent(provider == .codex ? ".codex" : ".claude")
+                roots[provider] = home.appendingPathComponent(provider.directoryName)
             }
         }
         timer = Timer.publish(every: 2, on: .main, in: .common).autoconnect()
@@ -57,18 +57,20 @@ final class AgentStatusManager: ObservableObject {
     }
 
     private func refresh() {
-        guard enabled, !reading, let codex = roots[.codex], let claude = roots[.claude] else { return }
+        guard enabled, !reading, let codex = roots[.codex], let claude = roots[.claude],
+              let qoder = roots[.qoder] else { return }
         reading = true
         let reader = self.reader
         let providers = enabledProviders
         queue.async { [weak self] in
-            let (allSessions, connections) = reader.scan(codex: codex, claude: claude)
+            let (allSessions, connections) = reader.scan(codex: codex, claude: claude, qoder: qoder)
             let sessions = allSessions.filter { providers.contains($0.provider) }
             Task { @MainActor [weak self] in
                 guard let self else { return }
                 self.reading = false
                 guard self.enabled, self.enabledProviders == providers,
-                      self.roots[.codex] == codex, self.roots[.claude] == claude else { return }
+                      self.roots[.codex] == codex, self.roots[.claude] == claude,
+                      self.roots[.qoder] == qoder else { return }
                 if self.sessions != sessions { self.sessions = sessions }
                 if self.connections != connections { self.connections = connections }
                 let summary = AgentSummary(sessions: sessions, now: Date())
@@ -88,7 +90,7 @@ final class AgentStatusManager: ObservableObject {
     func chooseDirectory(for provider: AgentProvider) {
         let panel = NSOpenPanel()
         panel.title = "连接 \(provider.title)"
-        panel.message = "选择 \(provider == .codex ? ".codex" : ".claude") 文件夹。仅在本机读取会话状态。"
+        panel.message = "选择 \(provider.directoryName) 文件夹。仅在本机读取会话状态。"
         panel.canChooseFiles = false
         panel.canChooseDirectories = true
         panel.showsHiddenFiles = true
