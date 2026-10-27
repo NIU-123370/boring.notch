@@ -1,0 +1,62 @@
+name: Fork Build
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build unsigned app
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select newest Xcode
+        run: |
+          XCODE=$(ls -d /Applications/Xcode*.app | sort -V | tail -1)
+          echo "Using $XCODE"
+          sudo xcode-select -s "$XCODE"
+          xcodebuild -version
+
+      - name: Resolve packages
+        run: xcodebuild -resolvePackageDependencies -project boringNotch.xcodeproj
+
+      - name: Build
+        run: |
+          xcodebuild build \
+            -project boringNotch.xcodeproj \
+            -scheme boringNotch \
+            -configuration Release \
+            -destination "generic/platform=macOS" \
+            -derivedDataPath build \
+            CODE_SIGN_IDENTITY="-" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=YES \
+            DEVELOPMENT_TEAM="" \
+            ONLY_ACTIVE_ARCH=NO
+
+      - name: Package
+        run: |
+          APP_PATH="build/Build/Products/Release/Boring Notch.app"
+          test -d "$APP_PATH" || { echo "app not found"; ls -R build/Build/Products | head -50; exit 1; }
+          mkdir -p out
+          cp -R "$APP_PATH" out/
+          cd out
+          zip -qry "BoringNotch-fork.zip" "Boring Notch.app"
+          ls -lh
+
+      - name: Upload app
+        uses: actions/upload-artifact@v4
+        with:
+          name: BoringNotch-fork
+          path: out/BoringNotch-fork.zip
+
+      - name: Upload logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-logs
+          path: build/Logs
