@@ -112,6 +112,14 @@ struct ContentView: View {
                         color: ((vm.notchState == .open || isHovering) && Defaults[.enableShadow])
                             ? .black.opacity(0.7) : .clear, radius: Defaults[.cornerRadiusScaling] ? 6 : 4
                     )
+                    .background(alignment: .topLeading) {
+                        PomodoroIslandAttachment(
+                            isClosed: vm.notchState == .closed,
+                            isHidden: vm.hideOnClosed || coordinator.helloAnimationRunning,
+                            notchHeight: vm.effectiveClosedNotchHeight,
+                            availableWidth: windowSize.width
+                        )
+                    }
                     .padding(
                         .bottom,
                         vm.effectiveClosedNotchHeight == 0 ? 10 : 0
