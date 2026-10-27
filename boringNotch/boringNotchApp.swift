@@ -281,7 +281,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ notification: Notification) {
 
-        PomodoroIslandController.shared.start()
+        Task { @MainActor in
+            PomodoroIslandController.shared.start()
+        }
 
         NotificationCenter.default.addObserver(
             self,

@@ -2,6 +2,7 @@ import AppKit
 import Combine
 import SwiftUI
 
+@MainActor
 final class PomodoroIslandController {
     static let shared = PomodoroIslandController()
 
@@ -21,13 +22,17 @@ final class PomodoroIslandController {
 
         PomodoroManager.shared.objectWillChange
             .receive(on: RunLoop.main)
-            .sink { [weak self] _ in self?.refresh() }
+            .sink { [weak self] _ in
+                Task { @MainActor in self?.refresh() }
+            }
             .store(in: &cancellables)
 
         NotificationCenter.default
             .publisher(for: NSApplication.didChangeScreenParametersNotification)
             .receive(on: RunLoop.main)
-            .sink { [weak self] _ in self?.reposition() }
+            .sink { [weak self] _ in
+                Task { @MainActor in self?.reposition() }
+            }
             .store(in: &cancellables)
 
         refresh()
@@ -63,7 +68,7 @@ final class PomodoroIslandController {
         hideWork?.cancel()
 
         let work = DispatchWorkItem { [weak self] in
-            self?.window?.orderOut(nil)
+            Task { @MainActor in self?.window?.orderOut(nil) }
         }
         hideWork = work
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3, execute: work)
