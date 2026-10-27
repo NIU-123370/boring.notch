@@ -54,6 +54,9 @@ struct SettingsView: View {
                 NavigationLink(value: "Shortcuts") {
                     Label("Shortcuts", systemImage: "keyboard")
                 }
+                NavigationLink(value: "Agents") {
+                    Label("Agents", systemImage: "sparkles")
+                }
                 // NavigationLink(value: "Extensions") {
                 //     Label("Extensions", systemImage: "puzzlepiece.extension")
                 // }
@@ -87,6 +90,8 @@ struct SettingsView: View {
                     Shelf()
                 case "Shortcuts":
                     Shortcuts()
+                case "Agents":
+                    AgentSettings()
                 case "Extensions":
                     GeneralSettings()
                 case "Advanced":
@@ -124,6 +129,29 @@ struct SettingsView: View {
         .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("AccentColorChanged"))) { _ in
             accentColorUpdateTrigger = UUID()
         }
+    }
+}
+
+struct AgentSettings: View {
+    @ObservedObject private var manager = AgentStatusManager.shared
+
+    var body: some View {
+        Form {
+            Section {
+                ForEach(AgentProvider.allCases, id: \.self) { provider in
+                    Toggle(provider.title, isOn: Binding(
+                        get: { manager.enabledProviders.contains(provider) },
+                        set: { manager.setProvider(provider, enabled: $0) }
+                    ))
+                }
+            } header: {
+                Text("Show in island")
+            } footer: {
+                Text("Choose which agents appear in the island.")
+            }
+        }
+        .accentColor(.effectiveAccent)
+        .navigationTitle("Agents")
     }
 }
 

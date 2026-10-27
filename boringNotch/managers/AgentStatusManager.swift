@@ -8,6 +8,14 @@ final class AgentStatusManager: ObservableObject {
     @Published private(set) var sessions: [AgentSession] = []
     @Published private(set) var connections: [AgentProvider: String] = [:]
     @Published private(set) var summary = AgentSummary(sessions: [], now: Date())
+    @Published private(set) var enabledProviders: Set<AgentProvider> {
+        didSet {
+            UserDefaults.standard.set(enabledProviders.map(\.rawValue).sorted(), forKey: "enabledAgentProviders")
+            sessions = sessions.filter { enabledProviders.contains($0.provider) }
+            summary = AgentSummary(sessions: sessions, now: Date())
+            refresh()
+        }
+    }
     @Published var enabled: Bool {
         didSet {
             UserDefaults.standard.set(enabled, forKey: "agentIslandEnabled")
@@ -25,6 +33,11 @@ final class AgentStatusManager: ObservableObject {
 
     private init() {
         enabled = UserDefaults.standard.object(forKey: "agentIslandEnabled") as? Bool ?? true
+        if let rawProviders = UserDefaults.standard.stringArray(forKey: "enabledAgentProviders") {
+            enabledProviders = Set(rawProviders.compactMap(AgentProvider.init(rawValue:)))
+        } else {
+            enabledProviders = Set(AgentProvider.allCases)
+        }
         let home = FileManager.default.homeDirectoryForCurrentUser
         for provider in AgentProvider.allCases {
             let key = "agentRootBookmark.\(provider.rawValue)"
@@ -47,17 +60,28 @@ final class AgentStatusManager: ObservableObject {
         guard enabled, !reading, let codex = roots[.codex], let claude = roots[.claude] else { return }
         reading = true
         let reader = self.reader
+        let providers = enabledProviders
         queue.async { [weak self] in
-            let (sessions, connections) = reader.scan(codex: codex, claude: claude)
+            let (allSessions, connections) = reader.scan(codex: codex, claude: claude)
+            let sessions = allSessions.filter { providers.contains($0.provider) }
             Task { @MainActor [weak self] in
                 guard let self else { return }
                 self.reading = false
-                guard self.enabled, self.roots[.codex] == codex, self.roots[.claude] == claude else { return }
+                guard self.enabled, self.enabledProviders == providers,
+                      self.roots[.codex] == codex, self.roots[.claude] == claude else { return }
                 if self.sessions != sessions { self.sessions = sessions }
                 if self.connections != connections { self.connections = connections }
                 let summary = AgentSummary(sessions: sessions, now: Date())
                 if self.summary != summary { self.summary = summary }
             }
+        }
+    }
+
+    func setProvider(_ provider: AgentProvider, enabled: Bool) {
+        if enabled {
+            enabledProviders.insert(provider)
+        } else {
+            enabledProviders.remove(provider)
         }
     }
 
