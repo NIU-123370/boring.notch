@@ -17,6 +17,7 @@ struct TabModel: Identifiable {
 let tabs = [
     TabModel(label: "Home", icon: "house.fill", view: .home),
     TabModel(label: "Focus", icon: "timer", view: .focus),
+    TabModel(label: "Agents", icon: "sparkles", view: .agents),
     TabModel(label: "Shelf", icon: "tray.fill", view: .shelf)
 ]
 
@@ -32,6 +33,8 @@ struct TabSelectionView: View {
                         }
                     }
                     .frame(height: 26)
+                    .help(tab.label)
+                    .accessibilityLabel(tab.label)
                     .foregroundStyle(tab.view == coordinator.currentView ? .white : .gray)
                     .background {
                         if tab.view == coordinator.currentView {

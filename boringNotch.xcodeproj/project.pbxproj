@@ -146,6 +146,10 @@
 		AB12F0072F1A0001000000A7 /* PomodoroSmallIsland.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB12F0062F1A0001000000A6 /* PomodoroSmallIsland.swift */; };
 		AB12F0042F1A0001000000A4 /* FocusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB12F0032F1A0001000000A3 /* FocusView.swift */; };
 		F38DE6482D8243E7008B5C6D /* BatteryActivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F38DE6472D8243E2008B5C6D /* BatteryActivityManager.swift */; };
+		AF1000010000000000000002 /* AgentSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF1000010000000000000001 /* AgentSession.swift */; };
+		AF1000020000000000000002 /* AgentStatusReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF1000020000000000000001 /* AgentStatusReader.swift */; };
+		AF1000030000000000000002 /* AgentStatusManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF1000030000000000000001 /* AgentStatusManager.swift */; };
+		AF1000040000000000000002 /* AgentIslandView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF1000040000000000000001 /* AgentIslandView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -315,6 +319,10 @@
 		AB12F0062F1A0001000000A6 /* PomodoroSmallIsland.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PomodoroSmallIsland.swift; sourceTree = "<group>"; };
 		AB12F0032F1A0001000000A3 /* FocusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusView.swift; sourceTree = "<group>"; };
 		F38DE6472D8243E2008B5C6D /* BatteryActivityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BatteryActivityManager.swift; sourceTree = "<group>"; };
+		AF1000010000000000000001 /* AgentSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentSession.swift; sourceTree = "<group>"; };
+		AF1000020000000000000001 /* AgentStatusReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentStatusReader.swift; sourceTree = "<group>"; };
+		AF1000030000000000000001 /* AgentStatusManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentStatusManager.swift; sourceTree = "<group>"; };
+		AF1000040000000000000001 /* AgentIslandView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "../Agents/AgentIslandView.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -518,6 +526,7 @@
 			isa = PBXGroup;
 			children = (
 				AB12F0062F1A0001000000A6 /* PomodoroSmallIsland.swift */,
+				AF1000040000000000000001 /* AgentIslandView.swift */,
 				AB12F0032F1A0001000000A3 /* FocusView.swift */,
 			);
 			path = Focus;
@@ -535,6 +544,8 @@
 				B1F0A0012E60000100000001 /* BrightnessManager.swift */,
 				59D8C23B2E589FAA00147B33 /* VolumeManager.swift */,
 				AB12F0012F1A0001000000A1 /* PomodoroManager.swift */,
+				AF1000030000000000000001 /* AgentStatusManager.swift */,
+				AF1000020000000000000001 /* AgentStatusReader.swift */,
 			);
 			path = managers;
 			sourceTree = "<group>";
@@ -649,6 +660,7 @@
 				1163988C2DF5CAB40052E6AF /* EventModel.swift */,
 				B19016232CC15B4D00E3F12E /* Constants.swift */,
 				14D570C82C5F38890011E668 /* BoringViewModel.swift */,
+				AF1000010000000000000001 /* AgentSession.swift */,
 				14D570CA2C5F4B2C0011E668 /* BatteryStatusViewModel.swift */,
 				1153BD902D986DB300979FB0 /* PlaybackState.swift */,
 			);
@@ -925,6 +937,10 @@
 				115C12EC2ED3D003009754CA /* OpenNotchHUD.swift in Sources */,
 				AB12F0022F1A0001000000A2 /* PomodoroManager.swift in Sources */,
 				AB12F0072F1A0001000000A7 /* PomodoroSmallIsland.swift in Sources */,
+				AF1000040000000000000002 /* AgentIslandView.swift in Sources */,
+				AF1000030000000000000002 /* AgentStatusManager.swift in Sources */,
+				AF1000020000000000000002 /* AgentStatusReader.swift in Sources */,
+				AF1000010000000000000002 /* AgentSession.swift in Sources */,
 				AB12F0042F1A0001000000A4 /* FocusView.swift in Sources */,
 				14C08BB92C8DE4B1000F8AA0 /* BoringCalendar.swift in Sources */,
 				5955950D2E900ED800C66711 /* ApplicationRelauncher.swift in Sources */,

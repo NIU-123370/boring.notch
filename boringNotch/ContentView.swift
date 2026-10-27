@@ -203,6 +203,17 @@ struct ContentView: View {
                         //                    }
                         //                    .keyboardShortcut("E", modifiers: .command)
                     }
+                    .overlay(alignment: .topTrailing) {
+                        AgentIslandAttachment(
+                            isClosed: vm.notchState == .closed,
+                            isHidden: vm.hideOnClosed || coordinator.helloAnimationRunning,
+                            notchHeight: vm.effectiveClosedNotchHeight,
+                            availableWidth: windowSize.width
+                        ) {
+                            coordinator.currentView = .agents
+                            vm.open()
+                        }
+                    }
                 if vm.chinHeight > 0 {
                     Rectangle()
                         .fill(Color.black.opacity(0.01))
@@ -357,6 +368,8 @@ struct ContentView: View {
                         NotchHomeView(albumArtNamespace: albumArtNamespace)
                     case .focus:
                         FocusView()
+                    case .agents:
+                        AgentSessionsView()
                     case .shelf:
                         ShelfView()
                     }

@@ -21,6 +21,15 @@ jobs:
           sudo xcode-select -s "$XCODE"
           xcodebuild -version
 
+      - name: Test agent status adapters
+        run: |
+          swiftc -swift-version 5 \
+            boringNotch/models/AgentSession.swift \
+            boringNotch/managers/AgentStatusReader.swift \
+            tests/agent-status/main.swift -o /tmp/agent-status-tests
+          /tmp/agent-status-tests
+          python3 tests/agent-status/test_hooks.py
+
       - name: Resolve packages
         run: xcodebuild -resolvePackageDependencies -project boringNotch.xcodeproj
 
