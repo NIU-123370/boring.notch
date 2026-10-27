@@ -38,6 +38,12 @@ jobs:
             DEVELOPMENT_TEAM="" \
             ONLY_ACTIVE_ARCH=NO
 
+      - name: Re-sign nested code ad-hoc
+        run: |
+          APP_PATH="build/Build/Products/Release/Boring Notch.app"
+          codesign --force --deep --sign - "$APP_PATH"
+          codesign -dv "$APP_PATH" 2>&1 | grep -E 'flags|TeamIdentifier'
+
       - name: Package
         run: |
           APP_PATH="build/Build/Products/Release/Boring Notch.app"
