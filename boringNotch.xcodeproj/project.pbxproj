@@ -143,6 +143,8 @@
 		B1F747F92EC7E94000F841DB /* LottieView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1F747F82EC7E94000F841DB /* LottieView.swift */; };
 		B1FEB4992C7686630066EBBC /* PanGesture.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1FEB4982C7686630066EBBC /* PanGesture.swift */; };
 		AB12F0022F1A0001000000A2 /* PomodoroManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB12F0012F1A0001000000A1 /* PomodoroManager.swift */; };
+		AB12F0072F1A0001000000A7 /* PomodoroSmallIsland.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB12F0062F1A0001000000A6 /* PomodoroSmallIsland.swift */; };
+		AB12F0092F1A0001000000A9 /* PomodoroIslandController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB12F0082F1A0001000000A8 /* PomodoroIslandController.swift */; };
 		AB12F0042F1A0001000000A4 /* FocusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB12F0032F1A0001000000A3 /* FocusView.swift */; };
 		F38DE6482D8243E7008B5C6D /* BatteryActivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F38DE6472D8243E2008B5C6D /* BatteryActivityManager.swift */; };
 /* End PBXBuildFile section */
@@ -311,6 +313,8 @@
 		B1F747F82EC7E94000F841DB /* LottieView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LottieView.swift; sourceTree = "<group>"; };
 		B1FEB4982C7686630066EBBC /* PanGesture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanGesture.swift; sourceTree = "<group>"; };
 		AB12F0012F1A0001000000A1 /* PomodoroManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PomodoroManager.swift; sourceTree = "<group>"; };
+		AB12F0062F1A0001000000A6 /* PomodoroSmallIsland.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PomodoroSmallIsland.swift; sourceTree = "<group>"; };
+		AB12F0082F1A0001000000A8 /* PomodoroIslandController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PomodoroIslandController.swift; sourceTree = "<group>"; };
 		AB12F0032F1A0001000000A3 /* FocusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusView.swift; sourceTree = "<group>"; };
 		F38DE6472D8243E2008B5C6D /* BatteryActivityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BatteryActivityManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -515,6 +519,7 @@
 		AB12F0052F1A0001000000A5 /* Focus */ = {
 			isa = PBXGroup;
 			children = (
+				AB12F0062F1A0001000000A6 /* PomodoroSmallIsland.swift */,
 				AB12F0032F1A0001000000A3 /* FocusView.swift */,
 			);
 			path = Focus;
@@ -532,6 +537,7 @@
 				B1F0A0012E60000100000001 /* BrightnessManager.swift */,
 				59D8C23B2E589FAA00147B33 /* VolumeManager.swift */,
 				AB12F0012F1A0001000000A1 /* PomodoroManager.swift */,
+				AB12F0082F1A0001000000A8 /* PomodoroIslandController.swift */,
 			);
 			path = managers;
 			sourceTree = "<group>";
@@ -921,6 +927,8 @@
 			files = (
 				115C12EC2ED3D003009754CA /* OpenNotchHUD.swift in Sources */,
 				AB12F0022F1A0001000000A2 /* PomodoroManager.swift in Sources */,
+				AB12F0072F1A0001000000A7 /* PomodoroSmallIsland.swift in Sources */,
+				AB12F0092F1A0001000000A9 /* PomodoroIslandController.swift in Sources */,
 				AB12F0042F1A0001000000A4 /* FocusView.swift in Sources */,
 				14C08BB92C8DE4B1000F8AA0 /* BoringCalendar.swift in Sources */,
 				5955950D2E900ED800C66711 /* ApplicationRelauncher.swift in Sources */,

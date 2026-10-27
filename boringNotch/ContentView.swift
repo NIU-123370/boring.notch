@@ -20,7 +20,6 @@ struct ContentView: View {
 
     @ObservedObject var coordinator = BoringViewCoordinator.shared
     @ObservedObject var musicManager = MusicManager.shared
-    @ObservedObject var pomodoro = PomodoroManager.shared
     @ObservedObject var batteryModel = BatteryStatusViewModel.shared
     @ObservedObject var brightnessManager = BrightnessManager.shared
     @ObservedObject var volumeManager = VolumeManager.shared
@@ -59,10 +58,6 @@ struct ContentView: View {
         )
     }
 
-    private var pomodoroBadgeSize: CGFloat {
-        max(0, vm.effectiveClosedNotchHeight - 10)
-    }
-
     private var computedChinWidth: CGFloat {
         var chinWidth: CGFloat = vm.closedNotchSize.width
 
@@ -75,9 +70,6 @@ struct ContentView: View {
             && coordinator.musicLiveActivityEnabled && !vm.hideOnClosed
         {
             chinWidth += (2 * max(0, vm.effectiveClosedNotchHeight - 12) + 20)
-            if pomodoro.isActive {
-                chinWidth += (pomodoroBadgeSize + 8) * 2
-            }
         } else if !coordinator.expandingView.show && vm.notchState == .closed
             && (!musicManager.isPlaying && musicManager.isPlayerIdle) && Defaults[.showNotHumanFace]
             && !vm.hideOnClosed
@@ -398,9 +390,6 @@ struct ContentView: View {
     @ViewBuilder
     func MusicLiveActivity() -> some View {
         HStack {
-            if pomodoro.isActive {
-                PomodoroBadge(size: pomodoroBadgeSize)
-            }
             Image(nsImage: musicManager.albumArt)
                 .resizable()
                 .clipped()
@@ -492,10 +481,6 @@ struct ContentView: View {
                 ),
                 alignment: .center
             )
-            if pomodoro.isActive {
-                Color.clear
-                    .frame(width: pomodoroBadgeSize, height: pomodoroBadgeSize)
-            }
         }
         .frame(
             height: vm.effectiveClosedNotchHeight,

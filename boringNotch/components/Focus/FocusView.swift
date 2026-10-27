@@ -152,36 +152,6 @@ struct FocusView: View {
     }
 }
 
-struct PomodoroBadge: View {
-    @ObservedObject var pomodoro = PomodoroManager.shared
-    let size: CGFloat
-
-    var body: some View {
-        ZStack {
-            Circle()
-                .fill(Color.black)
-            Circle()
-                .stroke(Color.white.opacity(0.15), lineWidth: 2)
-            Circle()
-                .trim(from: 0, to: pomodoro.progress)
-                .stroke(
-                    pomodoro.phase == .focus ? Color.effectiveAccent : Color.green,
-                    style: StrokeStyle(lineWidth: 2, lineCap: .round)
-                )
-                .rotationEffect(.degrees(-90))
-            Text(minutesText)
-                .font(.system(size: max(7, size * 0.42), weight: .semibold, design: .rounded))
-                .monospacedDigit()
-                .foregroundStyle(.white)
-        }
-        .frame(width: size, height: size)
-    }
-
-    private var minutesText: String {
-        "\(Int((pomodoro.remaining / 60).rounded(.up)))"
-    }
-}
-
 #Preview {
     FocusView()
         .frame(width: 640, height: 170)
